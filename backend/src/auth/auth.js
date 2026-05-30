@@ -132,4 +132,39 @@ authRouter.post("/signup", async (req, res) => {
   );
 });
 
+authRouter.post("/login", (req, res) => {
+  passport.authenticate("local", (error, user) => {
+    if (error) {
+      return res.status(500).send({
+        success: false,
+        statusCode: 500,
+        body: {
+          text: "Error during authentication",
+          error,
+        },
+      });
+    }
+    if (!user) {
+      return res.status(400).send({
+        success: false,
+        statusCode: 400,
+        body: {
+          text: "User not found",
+        },
+      });
+    }
+
+    const token = jwt.sign(user, "secret");
+    return res.status(200).send({
+      success: true,
+      statusCode: 200,
+      body: {
+        text: "User authenticated successfully",
+        user,
+        token,
+      },
+    });
+  })(req, res);
+});
+
 export default authRouter;
