@@ -5,7 +5,44 @@ const collectionName = "orders";
 
 export default class OrdersDataAccess {
   async getOrders() {
-    const result = await Mongo.db.collection(collectionName).find({}).toArray();
+    const result = await Mongo.db
+      .collection(collectionName)
+      .aggregate([
+        {
+          $lookup: {
+            from: "orderItems",
+            localField: "_id",
+            foreignField: "orderId",
+            as: "orderItems",
+          },
+        },
+        {
+          $lookup: {
+            from: "users",
+            localField: "userId",
+            foreignField: "_id",
+            as: "userDetails",
+          },
+        },
+        {
+          $project: {
+            "userDetails.password": 0,
+            "userDetails.salt": 0,
+          },
+        },
+        {
+          $unwind: "$orderItems",
+        },
+        {
+          $lookup: {
+            from: "plates",
+            localField: "orderItems.plateId",
+            foreignField: "_id",
+            as: "userDetails",
+          },
+        },
+      ])
+      .toArray();
 
     return result;
   }
@@ -27,7 +64,7 @@ export default class OrdersDataAccess {
 
     items.map((item) => {
       item.plateId = new ObjectId(item.plateId);
-      item.orderId = new ObjectId(item.orderId);
+      item.orderId = new ObjectId(newOrder.insertedId);
     });
 
     const result = await Mongo.db.collection("orderItems").insertMany(items);
