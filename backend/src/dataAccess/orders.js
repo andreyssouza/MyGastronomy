@@ -38,7 +38,7 @@ export default class OrdersDataAccess {
             from: "plates",
             localField: "orderItems.plateId",
             foreignField: "_id",
-            as: "userDetails",
+            as: "orderItems.itemDetails",
           },
         },
       ])
