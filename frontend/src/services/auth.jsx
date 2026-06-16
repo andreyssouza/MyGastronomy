@@ -30,7 +30,9 @@ export default function authServices() {
       });
   };
 
-  const logout = () => {};
+  const logout = () => {
+    localStorage.removeItem("auth");
+  };
 
   const signup = (formData) => {
     setAuthLoading(true);
