@@ -11,34 +11,26 @@ ordersRouter.get("/", async (req, res) => {
   res.status(statusCode).send({ success, statusCode, body });
 });
 
-ordersRouter.get("/:id", async (req, res) => {
-  const { success, statusCode, body } =
-    await ordersControllers.getOrdersByUserId(req.params.id);
+ordersRouter.get("/userorders/:id", async (req, res) => {
+  const { success, statusCode, body } = await ordersControllers.getOrdersByUserId(req.params.id);
 
   res.status(statusCode).send({ success, statusCode, body });
 });
 
 ordersRouter.post("/", async (req, res) => {
-  const { success, statusCode, body } = await ordersControllers.addOrder(
-    req.body,
-  );
+  const { success, statusCode, body } = await ordersControllers.addOrder(req.body);
 
   res.status(statusCode).send({ success, statusCode, body });
 });
 
 ordersRouter.delete("/:id", async (req, res) => {
-  const { success, statusCode, body } = await ordersControllers.deleteOrder(
-    req.params.id,
-  );
+  const { success, statusCode, body } = await ordersControllers.deleteOrder(req.params.id);
 
   res.status(statusCode).send({ success, statusCode, body });
 });
 
 ordersRouter.put("/:id", async (req, res) => {
-  const { success, statusCode, body } = await ordersControllers.updateOrder(
-    req.params.id,
-    req.body,
-  );
+  const { success, statusCode, body } = await ordersControllers.updateOrder(req.params.id, req.body);
 
   res.status(statusCode).send({ success, statusCode, body });
 });
