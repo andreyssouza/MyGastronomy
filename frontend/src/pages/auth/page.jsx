@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
-import { TextField, Button } from "@mui/material";
+import { TextField } from "@mui/material";
 import styles from "./page.module.css";
 import authServices from "../../services/auth.jsx";
 import { useNavigate } from "react-router-dom";
+import { LuLogIn } from "react-icons/lu";
 
 export default function Auth() {
   const [formType, setFormType] = useState("login");
@@ -67,7 +68,9 @@ export default function Auth() {
             <TextField required label="Email" type="email" name="email" onChange={handleFormDataChange} />
             <TextField required label="Password" type="password" name="password" onChange={handleFormDataChange} />
 
-            <Button type="submit">Login</Button>
+            <button type="submit">
+              Login <LuLogIn />
+            </button>
           </form>
         </>
       ) : null}
@@ -82,7 +85,9 @@ export default function Auth() {
             <TextField required label="Password" type="password" name="password" onChange={handleFormDataChange} />
             <TextField required label="ConfirmPassword" type="password" name="confirmPassword" onChange={handleFormDataChange} />
 
-            <Button type="submit">Signup</Button>
+            <button type="submit">
+              Signup <LuLogIn />
+            </button>
           </form>
         </div>
       ) : null}
