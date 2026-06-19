@@ -4,6 +4,7 @@ import authServices from "../../services/auth.jsx";
 import orderServices from "../../services/order.jsx";
 import styles from "./page.module.css";
 import { LuLogOut, LuTimer, LuCircleAlert, LuCircleCheck } from "react-icons/lu";
+import { Link } from "react-router-dom";
 
 export default function Profile() {
   const { logout } = authServices();
@@ -74,7 +75,12 @@ export default function Profile() {
           ))}
         </div>
       ) : (
-        <div>You do not have orders yet</div>
+        <div>
+          You do not have orders yet.
+          <Link to={"/plates"} className={styles.platesLink}>
+            Click here and see our specialities!
+          </Link>
+        </div>
       )}
     </div>
   );
