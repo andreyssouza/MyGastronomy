@@ -19,9 +19,18 @@ export function CartProvider({ children }) {
     }
   };
 
-  const removeFromCart = (itemId) => {};
+  const removeFromCart = (itemId) => {
+    const cartItemsSanitized = cartItems.filter((item) => {
+      return item._id !== itemId;
+    });
+    setCartItems(cartItemsSanitized);
+  };
 
-  return <CartContext.Provider value={{ addToCart, removeFromCart, cartItems }}>{children}</CartContext.Provider>;
+  const updateCartItems = (items) => {
+    setCartItems(items);
+  };
+
+  return <CartContext.Provider value={{ addToCart, removeFromCart, cartItems, updateCartItems }}>{children}</CartContext.Provider>;
 }
 
 export const useCartContext = () => {
