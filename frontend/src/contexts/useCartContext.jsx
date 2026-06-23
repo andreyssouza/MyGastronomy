@@ -30,7 +30,11 @@ export function CartProvider({ children }) {
     setCartItems(items);
   };
 
-  return <CartContext.Provider value={{ addToCart, removeFromCart, cartItems, updateCartItems }}>{children}</CartContext.Provider>;
+  const clearCart = () => {
+    setCartItems([]);
+  };
+
+  return <CartContext.Provider value={{ addToCart, removeFromCart, cartItems, updateCartItems, clearCart }}>{children}</CartContext.Provider>;
 }
 
 export const useCartContext = () => {
