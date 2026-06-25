@@ -13,7 +13,8 @@ export const Mongo = {
 
       return "Connected to mongo";
     } catch (error) {
-      return { text: "Error during mongo connection", error };
+      console.error("Error during mongo connection", error);
+      throw error;
     }
   },
 };
