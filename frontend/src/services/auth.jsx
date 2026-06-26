@@ -3,7 +3,7 @@ import { useState } from "react";
 export default function authServices() {
   const [authLoading, setAuthLoading] = useState(false);
 
-  const url = "http://localhost:3000/auth";
+  const url = "https://mygastronomybackend-gpdefehac6ayb0b0.italynorth-01.azurewebsites.net/auth";
 
   const login = (formData) => {
     setAuthLoading(true);
