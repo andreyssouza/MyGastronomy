@@ -5,7 +5,7 @@ export default function plateServices() {
   const [refetchPlates, setRefetchPlates] = useState(true);
   const [platesList, setPlatesList] = useState([]);
 
-  const url = "https://mygastronomybackend-gpdefehac6ayb0b0.italynorth-01.azurewebsites.net/plates";
+  const url = `https://mygastronomybackend-gpdefehac6ayb0b0.italynorth-01.azurewebsites.net//plates`;
 
   const getAvailablesPlates = (userId) => {
     setPlatesLoading(true);

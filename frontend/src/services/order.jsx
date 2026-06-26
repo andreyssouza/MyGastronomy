@@ -5,7 +5,7 @@ export default function orderServices() {
   const [refetchOrders, setRefetchOrders] = useState(true);
   const [ordersList, setOrdersList] = useState([]);
 
-  const url = "https://mygastronomybackend-gpdefehac6ayb0b0.italynorth-01.azurewebsites.net/order";
+  const url = `https://mygastronomybackend-gpdefehac6ayb0b0.italynorth-01.azurewebsites.net//orders`;
 
   const getUserOrders = (userId) => {
     setOrderLoading(true);
