@@ -1,0 +1,38 @@
+/* Centraliza e limita a largura máxima da página para telas grandes */
+.pageContainer {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 40px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Título elegante combinando com o tom escuro do seu projeto */
+.pageTitle {
+  color: #0c3127; /* Um verde escuro premium */
+  font-size: 2rem;
+  margin-bottom: 30px;
+  font-family: sans-serif;
+}
+
+/* O Grid mágico que organiza os pratos lado a lado */
+.platesGrid {
+  display: grid;
+  /* Cria colunas automáticas de 320px (o tamanho exato do seu card) */
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 30px; /* Espaço perfeito entre as fotos */
+  width: 100%;
+  justify-items: center; /* Centraliza os pratos na tela */
+}
+
+/* O embrulho do card individual (onde o clique acontece) */
+.cardWrapper {
+  transition: transform 0.2s ease-in-out;
+  cursor: pointer;
+}
+
+/* Efeito sutil de elevação ao passar o mouse */
+.cardWrapper:hover {
+  transform: scale(1.02);
+}

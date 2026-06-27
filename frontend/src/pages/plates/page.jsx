@@ -39,18 +39,24 @@ export default function Plates() {
 
   return (
     <>
-      <div>
-        {platesList.map((plate) => (
-          <div
-            key={plate._id}
-            className={styles.cardContainer}
-            onClick={() => {
-              handlePlateSelected(plate);
-            }}
-          >
-            <PlateCard plateData={plate} />
-          </div>
-        ))}
+      {/* Adicionamos a classe pageContainer para centralizar o bloco todo na tela */}
+      <div className={styles.pageContainer}>
+        <h1 className={styles.pageTitle}>Nossos Pratos</h1>
+
+        {/* Criamos este container PAI que vai ditar as regras do Grid */}
+        <div className={styles.platesGrid}>
+          {platesList.map((plate) => (
+            <div
+              key={plate._id}
+              className={styles.cardWrapper} /* Mudamos o nome para wrapper para não confundir com o card interno */
+              onClick={() => {
+                handlePlateSelected(plate);
+              }}
+            >
+              <PlateCard plateData={plate} />
+            </div>
+          ))}
+        </div>
       </div>
 
       <div>{plateSelected && <PlatePopup plateData={plateSelected} onClose={handleClosePopup} onAddToCart={handleAddToCart} />}</div>
