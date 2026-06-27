@@ -27,11 +27,12 @@ describe("Auth routes - with MongoDB in memory", () => {
   });
 
   describe("POST /auth/signup", () => {
-    test("should register a new user", async () => {
+    it("should register a new user", async () => {
       const newUser = {
         fullname: "João Silva",
         email: "joao@example.com",
         password: "password123",
+        confirmPassword: "password123",
       };
 
       const res = await request(app).post("/auth/signup").send(newUser);
@@ -42,36 +43,77 @@ describe("Auth routes - with MongoDB in memory", () => {
       expect(res.body.body.user).toHaveProperty("email", "joao@example.com");
     });
 
-    test("should not allow duplicate email", async () => {
+    it("should not allow duplicate email", async () => {
       const user = {
         fullname: "Maria Silva",
         email: "maria@example.com",
         password: "password123",
+        confirmPassword: "password123",
       };
 
-      // Primeira tentativa - sucesso
       await request(app).post("/auth/signup").send(user);
-
-      // Segunda tentativa - deve falhar
       const res = await request(app).post("/auth/signup").send(user);
 
-      expect(res.status).toBe(500);
+      expect(res.status).toBe(400);
       expect(res.body).toHaveProperty("success", false);
       expect(res.body.body.text).toBe("User already exists");
+    });
+
+    it("should reject mismatched passwords", async () => {
+      const user = {
+        fullname: "Pedro Santos",
+        email: "pedro@example.com",
+        password: "password123",
+        confirmPassword: "different123",
+      };
+
+      const res = await request(app).post("/auth/signup").send(user);
+
+      expect(res.status).toBe(400);
+      expect(res.body).toHaveProperty("success", false);
+      expect(res.body.body.text).toBe("Validation error");
+    });
+
+    it("should reject invalid email", async () => {
+      const user = {
+        fullname: "Test User",
+        email: "invalid-email",
+        password: "password123",
+        confirmPassword: "password123",
+      };
+
+      const res = await request(app).post("/auth/signup").send(user);
+
+      expect(res.status).toBe(400);
+      expect(res.body).toHaveProperty("success", false);
+    });
+
+    it("should reject short password", async () => {
+      const user = {
+        fullname: "Test User",
+        email: "test@example.com",
+        password: "123",
+        confirmPassword: "123",
+      };
+
+      const res = await request(app).post("/auth/signup").send(user);
+
+      expect(res.status).toBe(400);
+      expect(res.body.body.text).toBe("Validation error");
     });
   });
 
   describe("POST /auth/login", () => {
     beforeEach(async () => {
-      // Criar um usuário para login
       await request(app).post("/auth/signup").send({
         fullname: "Test User",
         email: "test@example.com",
         password: "testpassword123",
+        confirmPassword: "testpassword123",
       });
     });
 
-    test("should login with correct credentials", async () => {
+    it("should login with correct credentials", async () => {
       const res = await request(app).post("/auth/login").send({
         email: "test@example.com",
         password: "testpassword123",
@@ -83,7 +125,7 @@ describe("Auth routes - with MongoDB in memory", () => {
       expect(res.body.body.user).toHaveProperty("email", "test@example.com");
     });
 
-    test("should reject login with wrong password", async () => {
+    it("should reject login with wrong password", async () => {
       const res = await request(app).post("/auth/login").send({
         email: "test@example.com",
         password: "wrongpassword",
@@ -94,7 +136,7 @@ describe("Auth routes - with MongoDB in memory", () => {
       expect(res.body.body.text).toBe("Invalid email or password");
     });
 
-    test("should reject login with non-existent email", async () => {
+    it("should reject login with non-existent email", async () => {
       const res = await request(app).post("/auth/login").send({
         email: "nonexistent@example.com",
         password: "anypassword",
@@ -102,6 +144,16 @@ describe("Auth routes - with MongoDB in memory", () => {
 
       expect(res.status).toBe(400);
       expect(res.body).toHaveProperty("success", false);
+    });
+
+    it("should reject invalid email format on login", async () => {
+      const res = await request(app).post("/auth/login").send({
+        email: "invalid-email",
+        password: "testpassword123",
+      });
+
+      expect(res.status).toBe(400);
+      expect(res.body.body.text).toBe("Validation error");
     });
   });
 });

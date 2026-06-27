@@ -5,6 +5,7 @@ import crypto from "crypto";
 import { Mongo } from "../database/mongo.js";
 import jwt from "jsonwebtoken";
 import { ObjectId } from "mongodb";
+import { validateLogin, validateSignup } from "../helpers/validators.js";
 
 const collectionName = "users";
 
@@ -39,12 +40,25 @@ passport.use(
 const authRouter = express.Router();
 
 authRouter.post("/signup", async (req, res) => {
-  const checkUser = await Mongo.db.collection(collectionName).findOne({ email: req.body.email });
+  // ✅ VALIDAR input
+  const { error, value } = validateSignup(req.body);
+  if (error) {
+    return res.status(400).send({
+      success: false,
+      statusCode: 400,
+      body: {
+        text: "Validation error",
+        errors: error.details.map((err) => err.message),
+      },
+    });
+  }
+
+  const checkUser = await Mongo.db.collection(collectionName).findOne({ email: value.email });
 
   if (checkUser) {
-    return res.status(500).send({
+    return res.status(400).send({
       success: false,
-      statusCode: 500,
+      statusCode: 400,
       body: {
         text: "User already exists",
       },
@@ -53,21 +67,20 @@ authRouter.post("/signup", async (req, res) => {
 
   const salt = crypto.randomBytes(16);
 
-  crypto.pbkdf2(req.body.password, salt, 310000, 16, "sha256", async (err, hashedPassword) => {
+  crypto.pbkdf2(value.password, salt, 310000, 16, "sha256", async (err, hashedPassword) => {
     if (err) {
       return res.status(500).send({
         success: false,
         statusCode: 500,
         body: {
           text: "Error on crypto password",
-          err: err,
         },
       });
     }
 
     const result = await Mongo.db.collection(collectionName).insertOne({
-      fullname: req.body.fullname,
-      email: req.body.email,
+      fullname: value.fullname,
+      email: value.email,
       password: hashedPassword,
       salt,
     });
@@ -75,7 +88,7 @@ authRouter.post("/signup", async (req, res) => {
     if (result.insertedId) {
       const user = await Mongo.db.collection(collectionName).findOne({ _id: new ObjectId(result.insertedId) });
 
-      const token = jwt.sign(user, "secret");
+      const token = jwt.sign(user, process.env.JWT_SECRET || "secret");
 
       return res.send({
         success: true,
@@ -83,7 +96,11 @@ authRouter.post("/signup", async (req, res) => {
         body: {
           text: "User registered correctly!",
           token,
-          user,
+          user: {
+            _id: user._id,
+            fullname: user.fullname,
+            email: user.email,
+          },
           logged: true,
         },
       });
@@ -92,14 +109,26 @@ authRouter.post("/signup", async (req, res) => {
 });
 
 authRouter.post("/login", (req, res) => {
-  passport.authenticate("local", (error, user) => {
-    if (error) {
+  // ✅ VALIDAR input
+  const { error, value } = validateLogin(req.body);
+  if (error) {
+    return res.status(400).send({
+      success: false,
+      statusCode: 400,
+      body: {
+        text: "Validation error",
+        errors: error.details.map((err) => err.message),
+      },
+    });
+  }
+
+  passport.authenticate("local", (authError, user) => {
+    if (authError) {
       return res.status(500).send({
         success: false,
         statusCode: 500,
         body: {
           text: "Error during authentication",
-          error,
         },
       });
     }
@@ -114,13 +143,17 @@ authRouter.post("/login", (req, res) => {
       });
     }
 
-    const token = jwt.sign(user, "secret");
+    const token = jwt.sign(user, process.env.JWT_SECRET || "secret");
     return res.status(200).send({
       success: true,
       statusCode: 200,
       body: {
         text: "User logged in correctly",
-        user,
+        user: {
+          _id: user._id,
+          fullname: user.fullname,
+          email: user.email,
+        },
         token,
       },
     });

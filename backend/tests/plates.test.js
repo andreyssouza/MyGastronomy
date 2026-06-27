@@ -8,11 +8,9 @@ let app;
 
 describe("Plates routes - with MongoDB in memory", () => {
   beforeAll(async () => {
-    // Inicia um MongoDB em memória para os testes
     mongod = await MongoMemoryServer.create();
     const uri = mongod.getUri();
 
-    // Conecta ao Mongo em memória
     await Mongo.connect({
       mongoConnectionString: uri,
       mongoDbName: "testdb",
@@ -22,7 +20,6 @@ describe("Plates routes - with MongoDB in memory", () => {
   });
 
   afterAll(async () => {
-    // Fecha a conexão e para o MongoDB em memória
     if (Mongo.client) {
       await Mongo.client.close();
     }
@@ -30,7 +27,7 @@ describe("Plates routes - with MongoDB in memory", () => {
   });
 
   describe("GET /plates", () => {
-    test("should return empty array initially", async () => {
+    it("should return empty array initially", async () => {
       const res = await request(app).get("/plates");
 
       expect(res.status).toBe(200);
@@ -41,7 +38,7 @@ describe("Plates routes - with MongoDB in memory", () => {
   });
 
   describe("POST /plates", () => {
-    test("should create a new plate", async () => {
+    it("should create a new plate", async () => {
       const newPlate = {
         name: "Pasta Carbonara",
         description: "Italian classic",
@@ -51,12 +48,12 @@ describe("Plates routes - with MongoDB in memory", () => {
 
       const res = await request(app).post("/plates").send(newPlate);
 
-      expect(res.status).toBe(200);
+      expect(res.status).toBe(201);
       expect(res.body).toHaveProperty("success", true);
       expect(res.body.body).toHaveProperty("insertedId");
     });
 
-    test("should list plates after creating one", async () => {
+    it("should list plates after creating one", async () => {
       const newPlate = {
         name: "Pizza Margherita",
         description: "Classic pizza",
@@ -72,10 +69,23 @@ describe("Plates routes - with MongoDB in memory", () => {
       expect(listRes.body.body.length).toBeGreaterThan(0);
       expect(listRes.body.body.some((plate) => plate.name === "Pizza Margherita")).toBe(true);
     });
+
+    it("should reject invalid plate data", async () => {
+      const invalidPlate = {
+        name: "P",
+        price: -10,
+      };
+
+      const res = await request(app).post("/plates").send(invalidPlate);
+
+      expect(res.status).toBe(400);
+      expect(res.body).toHaveProperty("success", false);
+      expect(res.body.body.text).toBe("Validation error");
+    });
   });
 
   describe("GET /plates/availables/", () => {
-    test("should return only available plates", async () => {
+    it("should return only available plates", async () => {
       const availablePlate = {
         name: "Sushi",
         description: "Fresh sushi",
