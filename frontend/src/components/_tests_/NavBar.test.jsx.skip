@@ -1,0 +1,33 @@
+import { render, screen } from "@testing-library/react";
+import { describe, it, expect } from "vitest";
+import { BrowserRouter } from "react-router-dom";
+import Navbar from "../navbar/navbar";
+
+const NavbarWithRouter = () => (
+  <BrowserRouter>
+    <Navbar />
+  </BrowserRouter>
+);
+
+describe("Navbar Component", () => {
+  it("should render navbar with logo", () => {
+    render(<NavbarWithRouter />);
+
+    const logos = screen.getAllByAltText(/logo mygastronomy/i);
+    expect(logos.length).toBeGreaterThan(0);
+  });
+
+  it("should render navigation links", () => {
+    render(<NavbarWithRouter />);
+
+    const homeLinks = screen.getAllByText("Home");
+    expect(homeLinks.length).toBeGreaterThan(0);
+  });
+
+  it("should have Plates link", () => {
+    render(<NavbarWithRouter />);
+
+    const platesLinks = screen.getAllByText("Plates");
+    expect(platesLinks.length).toBeGreaterThan(0);
+  });
+});
