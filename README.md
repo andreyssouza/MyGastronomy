@@ -2,7 +2,8 @@
 
 Aplicativo full-stack para gerenciamento de restaurante com autenticação JWT, validação de inputs e 24 testes automatizados.
 
-**🌐 Deploy:** [Azure](https://mygastronomybackend-gpdefehac6ayb0b0.italynorth-01.azurewebsites.net)
+**🌐 Deploy:backend** [Azure](https://mygastronomybackend-gpdefehac6ayb0b0.italynorth-01.azurewebsites.net)
+**🌐 Deploy:frontend**[Azure](https://mygastronomyfrontend-gpdefehac6ayb0b0.italynorth-01.azurewebsites.net)
 
 ---
 
