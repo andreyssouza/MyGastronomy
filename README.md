@@ -3,6 +3,7 @@
 Aplicativo full-stack para gerenciamento de restaurante com autenticação JWT, validação de inputs e 24 testes automatizados.
 
 **🌐 Deploy:backend** [Azure](https://mygastronomybackend-gpdefehac6ayb0b0.italynorth-01.azurewebsites.net)
+
 **🌐 Deploy:frontend**[Azure](https://mygastronomyfrontend-gpdefehac6ayb0b0.italynorth-01.azurewebsites.net)
 
 ---
@@ -199,7 +200,7 @@ git push origin feature/minha-feature
 
 ## 👨‍💻 Autor
 
-**Andres Souza** — Desenvolvedor Full-Stack
+**Andrey Souza** — Desenvolvedor Full-Stack
 
 - GitHub: [@andreyssouza](https://github.com/andreyssouza)
 - Repositório: [MyGastronomy](https://github.com/andreyssouza/MyGastronomy)
@@ -212,4 +213,4 @@ ISC License
 
 ---
 
-**Feito com ❤️ em Node.js + React** ⭐
+**Feito em Node.js + React** 
