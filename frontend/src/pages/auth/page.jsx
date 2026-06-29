@@ -5,9 +5,12 @@ import authServices from "../../services/auth.jsx";
 import { useNavigate } from "react-router-dom";
 import { LuLogIn } from "react-icons/lu";
 
+const loginInitialState = { email: "", password: "" };
+const signupInitialState = { fullname: "", email: "", password: "", confirmPassword: "" };
+
 export default function Auth() {
   const [formType, setFormType] = useState("login");
-  const [formData, setFormData] = useState(null);
+  const [formData, setFormData] = useState(loginInitialState);
   const { login, signup, authLoading } = authServices();
 
   const navigate = useNavigate();
@@ -17,40 +20,61 @@ export default function Auth() {
     if (authData) {
       navigate("/profile");
     }
-  }, [authData]);
+  }, [authData, navigate]);
 
   const handleChangeFormType = () => {
-    setFormData(null);
     if (formType === "login") {
       setFormType("signup");
+      setFormData(signupInitialState);
     } else {
       setFormType("login");
+      setFormData(loginInitialState);
     }
   };
 
   const handleFormDataChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSubmitForm = (e) => {
     e.preventDefault();
-    console.log(formData);
 
-    switch (formType) {
-      case "login":
-        login(formData);
-        break;
-      case "signup":
-        if (formData.password !== formData.confirmPassword) {
-          console.log("Passwords do not match");
-          return;
-        }
+    if (formType === "login") {
+      if (!formData.email || !formData.password) {
+        alert("Email and password are required");
+        return;
+      }
 
-        signup(formData);
-        break;
+      login({
+        email: formData.email.trim(),
+        password: formData.password,
+      });
+      return;
+    }
+
+    if (formType === "signup") {
+      if (!formData.fullname || !formData.email || !formData.password || !formData.confirmPassword) {
+        alert("All signup fields are required");
+        return;
+      }
+
+      if (formData.password.length < 6) {
+        alert("Password must have at least 6 characters");
+        return;
+      }
+
+      if (formData.password !== formData.confirmPassword) {
+        alert("Passwords do not match");
+        return;
+      }
+
+      signup({
+        fullname: formData.fullname.trim(),
+        email: formData.email.trim(),
+        password: formData.password,
+        confirmPassword: formData.confirmPassword,
+      });
     }
   };
 
@@ -65,8 +89,8 @@ export default function Auth() {
           <h1>Login</h1>
           <button onClick={handleChangeFormType}>Don't you have an account? Click here</button>
           <form onSubmit={handleSubmitForm}>
-            <TextField required label="Email" type="email" name="email" onChange={handleFormDataChange} />
-            <TextField required label="Password" type="password" name="password" onChange={handleFormDataChange} />
+            <TextField required label="Email" type="email" name="email" value={formData.email} onChange={handleFormDataChange} />
+            <TextField required label="Password" type="password" name="password" value={formData.password} onChange={handleFormDataChange} />
 
             <button type="submit">
               Login <LuLogIn />
@@ -80,10 +104,10 @@ export default function Auth() {
           <h1>Signup</h1>
           <button onClick={handleChangeFormType}>Already have an account? Click here</button>
           <form onSubmit={handleSubmitForm}>
-            <TextField required label="Fullname" type="fullname" name="fullname" onChange={handleFormDataChange} />
-            <TextField required label="Email" type="email" name="email" onChange={handleFormDataChange} />
-            <TextField required label="Password" type="password" name="password" onChange={handleFormDataChange} />
-            <TextField required label="ConfirmPassword" type="password" name="confirmPassword" onChange={handleFormDataChange} />
+            <TextField required label="Fullname" type="text" name="fullname" value={formData.fullname} onChange={handleFormDataChange} />
+            <TextField required label="Email" type="email" name="email" value={formData.email} onChange={handleFormDataChange} />
+            <TextField required label="Password" type="password" name="password" value={formData.password} onChange={handleFormDataChange} />
+            <TextField required label="ConfirmPassword" type="password" name="confirmPassword" value={formData.confirmPassword} onChange={handleFormDataChange} />
 
             <button type="submit">
               Signup <LuLogIn />

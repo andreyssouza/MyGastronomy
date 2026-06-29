@@ -1,62 +1,78 @@
 import { useState } from "react";
 
+const API_URL = import.meta.env.VITE_API_URL;
+
 export default function authServices() {
   const [authLoading, setAuthLoading] = useState(false);
 
-  const url = `https://mygastronomybackend-gpdefehac6ayb0b0.italynorth-01.azurewebsites.net/auth`;
+  const extractErrorMessage = (result, fallback = "Something went wrong") => {
+    return result?.body?.text || result?.message || fallback;
+  };
 
-  const login = (formData) => {
-    setAuthLoading(true);
+  const login = async ({ email, password }) => {
+    try {
+      setAuthLoading(true);
 
-    fetch(`${url}/login`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Access-Control-Allow-Origin": "*",
-      },
-      body: JSON.stringify(formData),
-    })
-      .then((response) => response.json())
-      .then((result) => {
-        if (result.success && result.body.token) {
-          localStorage.setItem("auth", JSON.stringify({ token: result.body.token, user: result.body.user }));
-        }
-      })
-      .catch((error) => {
-        console.log(error);
-      })
-      .finally(() => {
-        setAuthLoading(false);
+      const response = await fetch(`${API_URL}/auth/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
       });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        alert(extractErrorMessage(result, "Erro ao fazer login"));
+        return;
+      }
+
+      if (result.success && result.body?.token && result.body?.user) {
+        localStorage.setItem("auth", JSON.stringify({ token: result.body.token, user: result.body.user }));
+        window.location.href = "/profile";
+      } else {
+        alert(extractErrorMessage(result, "Erro ao fazer login"));
+      }
+    } catch (error) {
+      console.error("Login error:", error);
+      alert("Erro ao fazer login");
+    } finally {
+      setAuthLoading(false);
+    }
+  };
+
+  const signup = async ({ fullname, email, password, confirmPassword }) => {
+    try {
+      setAuthLoading(true);
+
+      const response = await fetch(`${API_URL}/auth/signup`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ fullname, email, password, confirmPassword }),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        alert(extractErrorMessage(result, "Erro ao criar conta"));
+        return;
+      }
+
+      if (result.success && result.body?.token && result.body?.user) {
+        localStorage.setItem("auth", JSON.stringify({ token: result.body.token, user: result.body.user }));
+        window.location.href = "/profile";
+      } else {
+        alert(extractErrorMessage(result, "Erro ao criar conta"));
+      }
+    } catch (error) {
+      console.error("Signup error:", error);
+      alert("Erro ao criar conta");
+    } finally {
+      setAuthLoading(false);
+    }
   };
 
   const logout = () => {
     localStorage.removeItem("auth");
-  };
-
-  const signup = (formData) => {
-    setAuthLoading(true);
-
-    fetch(`${url}/signup`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Access-Control-Allow-Origin": "*",
-      },
-      body: JSON.stringify(formData),
-    })
-      .then((response) => response.json())
-      .then((result) => {
-        if (result.success && result.body.token) {
-          localStorage.setItem("auth", JSON.stringify({ token: result.body.token, user: result.body.user }));
-        }
-      })
-      .catch((error) => {
-        console.log(error);
-      })
-      .finally(() => {
-        setAuthLoading(false);
-      });
   };
 
   return { signup, login, logout, authLoading };

@@ -42,9 +42,9 @@ export default function Profile() {
         Logout <LuLogOut />
       </button>
 
-      {ordersList.length > 0 ? (
+      {(ordersList ?? []).length > 0 ? (
         <div className={styles.ordersContainer}>
-          {ordersList.map((order) => (
+          {(ordersList ?? []).map((order) => (
             <div key={order._id} className={styles.orderContainer}>
               {order.pickupStatus === "Pending" ? (
                 <p className={`${styles.pickupStatus} ${styles.pending}`}>
@@ -66,10 +66,10 @@ export default function Profile() {
                 </p>
               ) : null}
               <h3>{order.pickupTime}</h3>
-              {order.orderItems.map((item) => (
+              {(order.orderItems ?? []).map((item) => (
                 <div key={item._id}>
-                  <h4>{item.itemDetails[0].name}</h4>
-                  <p>Quantity: {item.quantity}</p>
+                  <h4>{item.itemDetails?.[0]?.name ?? "Unknown item"}</h4>
+                  <p>Quantity: {item.quantity ?? 0}</p>
                 </div>
               ))}
             </div>
