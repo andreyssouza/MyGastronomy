@@ -1,3 +1,12 @@
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/57d4262d-77ac-4c14-a519-58fa9175907f" />
+
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/932e81b2-a65b-4293-8e59-0f0d9d56897e" />
+
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/eeb43718-f661-4d82-9223-b186aa7bc2df" />
+
+
+
+
 # 🍽️ MyGastronomy
 
 Aplicativo full-stack para gerenciamento de restaurante com autenticação JWT, validação de inputs e 24 testes automatizados.
